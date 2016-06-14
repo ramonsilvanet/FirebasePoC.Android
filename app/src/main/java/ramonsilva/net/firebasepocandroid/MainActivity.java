@@ -4,43 +4,56 @@ import android.app.Dialog;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.Api;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.messaging.FirebaseMessaging;
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
+
+    private DatabaseReference mFirebaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        int errorCode = connectionResult.getErrorCode();
+        iniciarConexaoComFirebase();
 
-        if(errorCode == ConnectionResult.SERVICE_MISSING
-                || errorCode == ConnectionResult.SERVICE_DISABLED
-                || errorCode == ConnectionResult.SERVICE_VERSION_UPDATE_REQUIRED){
+        View buttonSend = findViewById(R.id.buttonSend);
+        final EditText editText = (EditText) findViewById(R.id.myEditText);
 
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(errorCode, this, 0);
-            errorDialog.show();
-        }
+        buttonSend.setOnClickListener( new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                String message = editText.getText().toString();
+                mFirebaseRef.setValue(message);
+                editText.getText().clear();
+            }
+
+        });
     }
 
     @Override
     protected void onResume() {
-        GoogleApiClient client = new GoogleApiClient.Builder(this).build();
-        client.registerConnectionFailedListener(this);
         super.onResume();
     }
 
     @Override
     protected void onPause() {
-        GoogleApiClient client = new GoogleApiClient.Builder(this).build();
-        client.unregisterConnectionFailedListener(this);
         super.onPause();
+    }
+
+    private void iniciarConexaoComFirebase(){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        mFirebaseRef = database.getReference("message");
     }
 }

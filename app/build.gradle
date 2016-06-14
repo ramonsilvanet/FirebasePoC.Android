@@ -24,12 +24,21 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.3.0'
 
-
     //Firebase Core
-    compile 'com.google.firebase:firebase-core:9.0.0'
+    compile 'com.google.firebase:firebase-core:9.0.2'
 
     //Firebase Cloud Message
-    compile 'com.google.firebase:firebase-messaging:9.0.0'
+    compile 'com.google.firebase:firebase-messaging:9.0.2'
+
+
+    //Firebase Real-Time Database
+    compile 'com.google.firebase:firebase-database:9.0.2'
+
+    //Firebase CLoud Hosting
+    compile 'com.google.firebase:firebase-storage:9.0.2'
+
+    //Firebase Crash
+    compile 'com.google.firebase:firebase-crash:9.0.2'
 }
 
 //Aplicamos o plugin do google play services
