@@ -1,22 +1,22 @@
 package ramonsilva.net.firebasepocandroid;
 
-import android.app.Dialog;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.util.Log;
 
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.common.api.Api;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import ramonsilva.net.firebasepocandroid.model.Message;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private DatabaseReference mFirebaseRef;
 
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String message = editText.getText().toString();
-                mFirebaseRef.setValue(message);
+                sendMessage(message);
                 editText.getText().clear();
             }
 
@@ -54,6 +54,20 @@ public class MainActivity extends AppCompatActivity {
 
     private void iniciarConexaoComFirebase(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        mFirebaseRef = database.getReference("message");
+        mFirebaseRef = database.getReference("chatroom");
+    }
+
+
+    private void sendMessage(String message){
+
+        String key = mFirebaseRef.child("room").push().getKey();
+        Message message1 = new Message(message, "Ramon Silva");
+
+        Map<String, Object> postValues = message1.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put("/messages/" + key, postValues);
+
+        mFirebaseRef.updateChildren(childUpdates);
+
     }
 }
